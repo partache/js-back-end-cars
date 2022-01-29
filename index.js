@@ -7,8 +7,8 @@
 // - [x] read all
 // - [x] read one by Id
 // - [x] create
-// - [] edit
-// - [] delete
+// - [x] edit
+// - [x] delete
 // - [x] search
 //implement controllers
 // - [x] home (catalog)
@@ -16,6 +16,8 @@
 // - [x] details
 // - [x] create
 // - [x] improved home(search)
+// - [x] edit
+// - [x] delete
 // [x] add front-end code
 
 
@@ -29,6 +31,8 @@ const create = require('./controllers/create');
 const { details } = require('./controllers/details');
 const { home } = require('./controllers/home');
 const { notFound } = require('./controllers/notFound');
+const edit = require('./controllers/edit');
+const deleteCar = require('./controllers/delete');
 
 const app = express();
 
@@ -45,9 +49,18 @@ app.use(carsService());
 app.get('/', home);//binding the controller
 app.get('/about', about);
 app.get('/details/:id', details);
+
 app.route('/create')
     .get(create.get)
     .post(create.post);
+
+app.route('/delete/:id')
+    .get(deleteCar.get)
+    .post(deleteCar.post);
+
+app.route('/edit/:id')
+    .get(edit.get)
+    .post(edit.post);
 
 app.all('*', notFound);
 

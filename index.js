@@ -3,8 +3,21 @@
 // [x] create home controller
 // [x] bind routing
 // [x] create layout
-// [] create data service
-// [] implement controllers
+// create data service
+// - [x] read all
+// - [x] read one by Id
+// - [x] create
+// - [] edit
+// - [] delete
+// - [x] search
+//implement controllers
+// - [x] home (catalog)
+// - [x] about
+// - [x] details
+// - [x] create
+// - [x] improved home(search)
+// [x] add front-end code
+
 
 
 const express = require('express');
@@ -12,7 +25,7 @@ const hbs = require('express-handlebars');
 const carsService = require('./services/cars');
 
 const { about } = require('./controllers/about');
-const { create } = require('./controllers/create');
+const create = require('./controllers/create');
 const { details } = require('./controllers/details');
 const { home } = require('./controllers/home');
 const { notFound } = require('./controllers/notFound');
@@ -24,15 +37,17 @@ app.engine('hbs', hbs.create({
 }).engine);
 app.set('view engine', 'hbs');
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));//it is a meddlewear for decoding the body stream 
 app.use('/static', express.static('static'));
 app.use(carsService());
 //so far initialize and configure Express app
 
 app.get('/', home);//binding the controller
 app.get('/about', about);
-app.get('/create', create);
 app.get('/details/:id', details);
+app.route('/create')
+    .get(create.get)
+    .post(create.post);
 
 app.all('*', notFound);
 

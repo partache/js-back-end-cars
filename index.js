@@ -10,6 +10,9 @@
 // - [x] edit
 // - [x] delete
 // - [x] search
+// - [] accessory read
+// - [] accessory create
+// - [] attach accessory
 //implement controllers
 // - [x] home (catalog)
 // - [x] about
@@ -18,12 +21,22 @@
 // - [x] improved home(search)
 // - [x] edit
 // - [x] delete
+// - [] create accessory
+// - [] attach accessory to car
+// - [] update details to include accessory
 // [x] add front-end code
-
+// [] add database connection
+// [] create Car model
+// [] upgrade car service to use Car model
+// [] create Accessory model
+// [] 
 
 
 const express = require('express');
 const hbs = require('express-handlebars');
+
+const initDb = require('./models/index');
+
 const carsService = require('./services/cars');
 
 const { about } = require('./controllers/about');
@@ -34,34 +47,40 @@ const { notFound } = require('./controllers/notFound');
 const edit = require('./controllers/edit');
 const deleteCar = require('./controllers/delete');
 
-const app = express();
+start(); 
 
-app.engine('hbs', hbs.create({
-    extname: '.hbs'
-}).engine);
-app.set('view engine', 'hbs');
+async function start() {
 
-app.use(express.urlencoded({ extended: true }));//it is a meddlewear for decoding the body stream 
-app.use('/static', express.static('static'));
-app.use(carsService());
-//so far initialize and configure Express app
+    await initDb();
+    const app = express();
 
-app.get('/', home);//binding the controller
-app.get('/about', about);
-app.get('/details/:id', details);
+    app.engine('hbs', hbs.create({
+        extname: '.hbs'
+    }).engine);
+    app.set('view engine', 'hbs');
 
-app.route('/create')
-    .get(create.get)
-    .post(create.post);
+    app.use(express.urlencoded({ extended: true }));//it is a meddlewear for decoding the body stream 
+    app.use('/static', express.static('static'));
+    app.use(carsService());
+    //so far initialize and configure Express app
 
-app.route('/delete/:id')
-    .get(deleteCar.get)
-    .post(deleteCar.post);
+    app.get('/', home);//binding the controller
+    app.get('/about', about);
+    app.get('/details/:id', details);
 
-app.route('/edit/:id')
-    .get(edit.get)
-    .post(edit.post);
+    app.route('/create')
+        .get(create.get)
+        .post(create.post);
 
-app.all('*', notFound);
+    app.route('/delete/:id')
+        .get(deleteCar.get)
+        .post(deleteCar.post);
 
-app.listen(3000, () => console.log('Server started on port 3000'));
+    app.route('/edit/:id')
+        .get(edit.get)
+        .post(edit.post);
+
+    app.all('*', notFound);
+
+    app.listen(3000, () => console.log('Server started on port 3000'));
+}

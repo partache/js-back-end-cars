@@ -25,11 +25,12 @@
 // - [] attach accessory to car
 // - [] update details to include accessory
 // [x] add front-end code
-// [] add database connection
-// [] create Car model
-// [] upgrade car service to use Car model
+// [x] add database connection
+// [x] create Car model
+// [x] upgrade car service to use Car model
+// [] add validation rules to Car model
 // [] create Accessory model
-// [] 
+
 
 
 const express = require('express');

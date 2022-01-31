@@ -10,9 +10,9 @@
 // - [x] edit
 // - [x] delete
 // - [x] search
-// - [] accessory read
-// - [] accessory create
-// - [] attach accessory
+// - [x] accessory read
+// - [x] accessory create
+// - [x] attach accessory
 //implement controllers
 // - [x] home (catalog)
 // - [x] about
@@ -28,8 +28,8 @@
 // [x] add database connection
 // [x] create Car model
 // [x] upgrade car service to use Car model
-// [] add validation rules to Car model
-// [] create Accessory model
+// [x] add validation rules to Car model
+// [x] create Accessory model
 
 
 
@@ -39,6 +39,7 @@ const hbs = require('express-handlebars');
 const initDb = require('./models/index');
 
 const carsService = require('./services/cars');
+const accessoryService = require('./services/accessory');
 
 const { about } = require('./controllers/about');
 const create = require('./controllers/create');
@@ -47,6 +48,8 @@ const { home } = require('./controllers/home');
 const { notFound } = require('./controllers/notFound');
 const edit = require('./controllers/edit');
 const deleteCar = require('./controllers/delete');
+const accessory = require('./controllers/accessory');
+const attach = require('./controllers/attach');
 
 start(); 
 
@@ -63,6 +66,7 @@ async function start() {
     app.use(express.urlencoded({ extended: true }));//it is a meddlewear for decoding the body stream 
     app.use('/static', express.static('static'));
     app.use(carsService());
+    app.use(accessoryService());
     //so far initialize and configure Express app
 
     app.get('/', home);//binding the controller
@@ -80,6 +84,14 @@ async function start() {
     app.route('/edit/:id')
         .get(edit.get)
         .post(edit.post);
+
+    app.route('/accessory')
+        .get(accessory.get)
+        .post(accessory.post);
+
+    app.route('/attach/:id')
+        .get(attach.get)
+        .post(attach.post);
 
     app.all('*', notFound);
 

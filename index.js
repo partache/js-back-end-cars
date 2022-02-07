@@ -13,6 +13,10 @@
 // - [x] accessory read
 // - [x] accessory create
 // - [x] attach accessory
+// - [] register user 
+// - [] login user 
+// - [] logout user 
+// - [] add authorization checks to data modification
 //implement controllers
 // - [x] home (catalog)
 // - [x] about
@@ -21,15 +25,20 @@
 // - [x] improved home(search)
 // - [x] edit
 // - [x] delete
-// - [] create accessory
-// - [] attach accessory to car
-// - [] update details to include accessory
+// - [x] create accessory
+// - [x] attach accessory to car
+// - [x] update details to include accessory
+// - [] auth controller with login, register, logout actions
+// - [] protect routes
 // [x] add front-end code
 // [x] add database connection
 // [x] create Car model
 // [x] upgrade car service to use Car model
 // [x] add validation rules to Car model
 // [x] create Accessory model
+// [] add session Middleware and auth libraries
+// [] create User model
+// [] add owner property to Car, Accessory models
 
 
 
@@ -40,6 +49,7 @@ const initDb = require('./models/index');
 
 const carsService = require('./services/cars');
 const accessoryService = require('./services/accessory');
+const authService = require('./services/auth');
 
 const { about } = require('./controllers/about');
 const create = require('./controllers/create');
@@ -50,8 +60,9 @@ const edit = require('./controllers/edit');
 const deleteCar = require('./controllers/delete');
 const accessory = require('./controllers/accessory');
 const attach = require('./controllers/attach');
+const { registerGet, registerPost, loginGet, loginPost, logoutGet } = require('./controllers/auth');
 
-start(); 
+start();
 
 async function start() {
 
@@ -67,6 +78,7 @@ async function start() {
     app.use('/static', express.static('static'));
     app.use(carsService());
     app.use(accessoryService());
+    app.use(authService());
     //so far initialize and configure Express app
 
     app.get('/', home);//binding the controller
@@ -92,6 +104,14 @@ async function start() {
     app.route('/attach/:id')
         .get(attach.get)
         .post(attach.post);
+
+    app.route('/register')
+        .get(registerGet)
+        .post(registerPost);
+
+    app.route('/login')
+        .get(loginGet)
+        .post(loginPost);
 
     app.all('*', notFound);
 

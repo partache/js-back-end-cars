@@ -28,17 +28,32 @@ function carViewModel(car) {
     return model;
 }
 
-async function hashPassword(password){
+async function hashPassword(password) {
     return bcrypt.hash(password, 10);
 }
 
-async function comparePassword(password, hashedPassword){
+async function comparePassword(password, hashedPassword) {
     return bcrypt.compare(password, hashedPassword);
+}
+
+function isLoggedIn() {
+    return async function (req, res, next) {
+        if (req.session.user) {
+            next();
+        } else {
+            res.redirect('/login');
+        }
+    }
 }
 
 module.exports = {
     accessoryViewModel,
     carViewModel,
     hashPassword,
-    comparePassword
+    comparePassword,
+    isLoggedIn
 }
+
+//we have to have model, that should be loaded in service,
+// that will be loaded in middlewear that will be loaded in express
+// that will end up in the controller

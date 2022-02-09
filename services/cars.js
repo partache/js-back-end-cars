@@ -21,7 +21,7 @@ async function getAll(query) {
     }
 
     const cars = await Car.find(options);//await Car.find({}).lean(); clears the mongoose functionalities and returns data only, thats is for handlebars
-    
+
     return cars.map(carViewModel);
 }
 
@@ -39,13 +39,25 @@ async function createCar(car) {
     await result.save();
 }
 
-async function deleteById(id) {
+async function deleteById(id, ownerId) {
     //await Car.findByIdAndDelete(id);
+    const existing = await Car.findById(id).where({ isDeleted: false });
+
+    if (existing.owner != ownerId) {
+        return false;
+    }
+
     await Car.findByIdAndUpdate(id, { isDeleted: true });
+
+    return true;
 }
 
-async function updateById(id, car) {
+async function updateById(id, car, ownerId) {
     const existing = await Car.findById(id).where({ isDeleted: false });
+
+    if (existing.owner != ownerId) {
+        return false;
+    }
 
     existing.name = car.name;
     existing.description = car.description;
@@ -55,10 +67,15 @@ async function updateById(id, car) {
 
     await existing.save();
 
+    return true;
 }
 
-async function attachAccessory(carId, accessoryId) {
+async function attachAccessory(carId, accessoryId, ownerId) {
     const existing = await Car.findById(carId);
+
+    if (existing.owner != ownerId) {
+        return false;
+    }
 
     existing.accessories.push(accessoryId);
     await existing.save();
